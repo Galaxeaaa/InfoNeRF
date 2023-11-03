@@ -187,7 +187,7 @@ def render_path(render_poses, hwf, chunk, render_kwargs, gt_imgs=None, savedir=N
             depth = depth.cpu().numpy()
             print("max:", np.nanmax(depth))
             depth = depth / 5 * 255
-            imageio.imwrite(os.path.join(savedir, '{:03d}_depth.png'.format(i)), depth)
+            imageio.imwrite(os.path.join(savedir, '{:03d}_depth.png'.format(i)), depth.astype(np.uint8))
         
         del rgb 
         del disp
