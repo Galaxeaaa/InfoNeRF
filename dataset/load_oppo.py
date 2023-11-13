@@ -73,7 +73,7 @@ def load_oppo_data(basedir, half_res=False, testskip=1, num_render_poses=40):
             mask = cv2.imread(mask_path, 2) > 0
             # mask = torch.from_numpy(mask).bool()
             img = img * mask[..., None] + (1 - mask[..., None])
-            img = np.concatenate([img, mask[..., None]], axis=-1)
+            img = np.concatenate([img, mask[..., None] * 255.0], axis=-1)
 
             imgs.append(img)
             poses.append(np.array(frame["transform_matrix"]))
