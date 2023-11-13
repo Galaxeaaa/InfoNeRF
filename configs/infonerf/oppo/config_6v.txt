@@ -16,7 +16,7 @@ N_rand = 1024
 N_iters = 50002
 
 i_video=1000000
-i_testset=25000
+i_testset=50000
 
 # Entropy
 entropy = True
