@@ -17,6 +17,7 @@ from run_nerf_helpers import *
 from dataset.load_llff import load_llff_data
 from dataset.load_dtu import load_dtu_data
 from dataset.load_blender import load_blender_data
+from dataset.load_oppo import load_oppo_data
 
 from utils.loss import EntropyLoss, SmoothingLoss
 from utils.generate_near_c2w import GetNearC2W, get_near_pixel
@@ -806,6 +807,31 @@ def train():
     elif args.dataset_type == 'blender':
         images, poses, render_poses, hwf, i_split = load_blender_data(args.datadir, args.half_res, args.testskip)
         print('Loaded blender', images.shape, render_poses.shape, hwf, args.datadir)
+        i_train, i_val, i_test = i_split
+        near = 2.
+        far = 6.
+
+        if args.fewshot > 0:
+            if args.train_scene is None:
+                np.random.seed(args.fewshot_seed)
+                i_train = np.random.choice(i_train, args.fewshot, replace=False)
+            else:
+                i_train = np.array(args.train_scene)
+            print('i_train', i_train)
+        
+        images_mask = images[...,-1]
+        if args.white_bkgd:
+            images = images[...,:3]*images[...,-1:] + (1.-images[...,-1:])
+        else:
+            images = images[...,:3]
+
+    ########################################
+    #          OpenIllumination            #
+    ########################################
+
+    elif args.dataset_type == 'oppo':
+        images, poses, render_poses, hwf, i_split = load_oppo_data(args.datadir, args.half_res, args.testskip)
+        print('Loaded oppo', images.shape, render_poses.shape, hwf, args.datadir)
         i_train, i_val, i_test = i_split
         near = 2.
         far = 6.
