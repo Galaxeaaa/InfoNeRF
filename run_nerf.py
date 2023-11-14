@@ -1243,11 +1243,14 @@ def train():
             test_redefine_psnr = img2psnr_redefine(torch.Tensor(rgbs), images[i_test])
            
             test_ssim, test_msssim = img2ssim(torch.Tensor(rgbs), images[i_test])
+
+            test_lpips = img2lpips(torch.Tensor(rgbs), images[i_test], device=device)
             
             if args.wandb:
                 wandb.log({ 'test_psnr': test_psnr, 
                             'test_psnr_re' : test_redefine_psnr,
-                            'test_ssim': test_ssim
+                            'test_ssim': test_ssim,
+                            'test_lpips': test_lpips
                     }, step=i)
             
             if args.dataset_type == 'dtu':

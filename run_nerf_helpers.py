@@ -10,11 +10,13 @@ from torch import searchsorted
 
 from matplotlib import pyplot as plt
 from pytorch_msssim import ssim, ms_ssim, SSIM, MS_SSIM
+from lpips import LPIPS
 
 # Misc
 img2mse = lambda x, y : torch.mean((x - y) ** 2)
 mse2psnr = lambda x : -10. * torch.log(x) / torch.log(torch.Tensor([10.]))
 to8b = lambda x : (255*np.clip(x,0,1)).astype(np.uint8)
+lpips_vgg = None
 
 def img2psnr_redefine(x,y):
     '''
@@ -62,6 +64,20 @@ def img2ssim(x,y, mask=None):
     ssim_ = ssim(x,y, data_range=1)
     ms_ssim_ = ms_ssim(x,y, data_range=1)
     return ssim_, ms_ssim_
+
+def img2lpips(x,y, lpips_batch_size=8, device='cuda'):
+    global lpips_vgg
+    # From pixelNeRF https://github.com/sxyu/pixel-nerf/blob/2929708e90b246dbd0329ce2a128ef381bd8c25d/eval/calc_metrics.py#L238
+    if lpips_vgg is None:
+        lpips_vgg = LPIPS(net="vgg").to(device=device)
+    lpips_all = []
+    preds_spl = torch.split(torch.from_numpy(x).permute(0,3,1,2).float(), lpips_batch_size, dim=0)
+    gts_spl = torch.split(torch.from_numpy(y).permute(0,3,1,2).float(), lpips_batch_size, dim=0)
+    for predi, gti in zip(preds_spl, gts_spl):
+        lpips_i = lpips_vgg(predi.to(device=device), gti.to(device=device))
+        lpips_all.append(lpips_i)
+    lpips = torch.cat(lpips_all)
+    lpips = lpips.mean().item()
 
 # Positional encoding (section 5.1)
 class Embedder:
