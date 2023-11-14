@@ -71,13 +71,15 @@ def img2lpips(x,y, lpips_batch_size=8, device='cuda'):
     if lpips_vgg is None:
         lpips_vgg = LPIPS(net="vgg").to(device=device)
     lpips_all = []
-    preds_spl = torch.split(torch.from_numpy(x).permute(0,3,1,2).float(), lpips_batch_size, dim=0)
-    gts_spl = torch.split(torch.from_numpy(y).permute(0,3,1,2).float(), lpips_batch_size, dim=0)
+    preds_spl = torch.split(x.permute(0,3,1,2).float(), lpips_batch_size, dim=0)
+    gts_spl = torch.split(y.permute(0,3,1,2).float(), lpips_batch_size, dim=0)
     for predi, gti in zip(preds_spl, gts_spl):
         lpips_i = lpips_vgg(predi.to(device=device), gti.to(device=device))
         lpips_all.append(lpips_i)
     lpips = torch.cat(lpips_all)
     lpips = lpips.mean().item()
+
+    return lpips
 
 # Positional encoding (section 5.1)
 class Embedder:
