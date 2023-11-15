@@ -833,8 +833,8 @@ def train():
         images, poses, render_poses, hwf, i_split = load_oppo_data(args.datadir, args.half_res, args.testskip)
         print('Loaded oppo', images.shape, render_poses.shape, hwf, args.datadir)
         i_train, i_val, i_test = i_split
-        near = 2.
-        far = 6.
+        near = 0.5
+        far = 1.5
 
         if args.fewshot > 0:
             if args.train_scene is None:
