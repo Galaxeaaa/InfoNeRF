@@ -9,3 +9,4 @@ tqdm
 opencv-python
 wandb
 pytorch-msssim
+lpips

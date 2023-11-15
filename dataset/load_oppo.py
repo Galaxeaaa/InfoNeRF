@@ -43,7 +43,7 @@ def pose_spherical(theta, phi, radius):
     return c2w
 
 
-def load_oppo_data(basedir, half_res=False, testskip=1, num_render_poses=40):
+def load_oppo_data(basedir, half_res=False, testskip=1, num_render_poses=40, factor=0):
     splits = ["train", "test"]
     metas = {}
     for s in splits:
@@ -105,9 +105,18 @@ def load_oppo_data(basedir, half_res=False, testskip=1, num_render_poses=40):
         W = W // 2
         focal = focal / 2
 
-        imgs_half_res = np.zeros((imgs.shape[0], H, W, 4))
+        imgs_downsampled = np.zeros((imgs.shape[0], H, W, 4))
         for i, img in enumerate(imgs):
-            imgs_half_res[i] = cv2.resize(img, (W, H), interpolation=cv2.INTER_AREA)
-        imgs = imgs_half_res
+            imgs_downsampled[i] = cv2.resize(img, (W, H), interpolation=cv2.INTER_AREA)
+        imgs = imgs_downsampled
+    elif factor > 0:
+        H = H // factor
+        W = W // factor
+        focal = focal / factor
+
+        imgs_downsampled = np.zeros((imgs.shape[0], H, W, 4))
+        for i, img in enumerate(imgs):
+            imgs_downsampled[i] = cv2.resize(img, (W, H), interpolation=cv2.INTER_AREA)
+        imgs = imgs_downsampled
 
     return imgs, poses, render_poses, [H, W, focal], i_split

@@ -4,7 +4,8 @@ basedir = ./logs
 dataset_type = oppo
  
 no_batching = True
-chunk=4096
+chunk=8192
+factor=4
  
 use_viewdirs = True
 white_bkgd = True

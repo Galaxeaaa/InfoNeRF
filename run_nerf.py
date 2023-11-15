@@ -830,7 +830,7 @@ def train():
     ########################################
 
     elif args.dataset_type == 'oppo':
-        images, poses, render_poses, hwf, i_split = load_oppo_data(args.datadir, args.half_res, args.testskip)
+        images, poses, render_poses, hwf, i_split = load_oppo_data(args.datadir, args.half_res, args.testskip, factor=args.factor)
         print('Loaded oppo', images.shape, render_poses.shape, hwf, args.datadir)
         i_train, i_val, i_test = i_split
         near = 0.5
@@ -1232,7 +1232,7 @@ def train():
             os.makedirs(testsavedir, exist_ok=True)
             print('test poses shape', poses[i_test].shape)
             with torch.no_grad():
-                rgbs, disps = render_path(torch.Tensor(poses[i_test]).to(device), hwf, args.chunk, render_kwargs_test, gt_imgs=images[i_test], savedir=testsavedir)
+                rgbs, disps = render_path(torch.Tensor(poses[i_test]).to(device), hwf, args.chunk, render_kwargs_test, gt_imgs=images[i_test], savedir=testsavedir, render_factor=args.render_factor)
             print('Saved test set')
 
             filenames = [os.path.join(testsavedir, '{:03d}.png'.format(k)) for k in range(len(i_test))]
@@ -1245,6 +1245,7 @@ def train():
             test_ssim, test_msssim = img2ssim(torch.Tensor(rgbs), images[i_test])
 
             test_lpips = img2lpips(torch.Tensor(rgbs), images[i_test], device=device)
+            print(f"TEST_LPIPS: {test_lpips}")
             
             if args.wandb:
                 wandb.log({ 'test_psnr': test_psnr, 
