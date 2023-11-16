@@ -29,6 +29,12 @@ rot_theta = lambda th: torch.Tensor(
     ]
 ).float()
 
+BLENDER_TO_OPENCV_MATRIX = np.array([
+    [1,  0,  0,  0],
+    [0, -1,  0,  0],
+    [0,  0, -1,  0],
+    [0,  0,  0,  1]
+], dtype=np.float32)
 
 def pose_spherical(theta, phi, radius):
     c2w = trans_t(radius)
@@ -76,7 +82,7 @@ def load_oppo_data(basedir, half_res=False, testskip=1, num_render_poses=40, fac
             img = np.concatenate([img, mask[..., None] * 255.0], axis=-1)
 
             imgs.append(img)
-            poses.append(np.array(frame["transform_matrix"]))
+            poses.append(np.array(frame["transform_matrix"]) @ BLENDER_TO_OPENCV_MATRIX)
         imgs = (np.array(imgs) / 255.0).astype(np.float32)  # keep all 4 channels (RGBA)
         poses = np.array(poses).astype(np.float32)
         counts.append(counts[-1] + imgs.shape[0])
