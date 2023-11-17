@@ -31,3 +31,4 @@ i_wandb = 10
 half_res = False
 fewshot = 4
 # train_scene = [26, 86, 2, 55]
+testskip = 0
