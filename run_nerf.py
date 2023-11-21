@@ -744,7 +744,8 @@ def train():
             i_test = np.array([i for i in args.test_scene])
 
         if i_test[0] < 0:
-            i_test = []
+            # i_test = []
+            i_test = np.array([i for i in range(len(poses)) if (i not in i_train)])
 
         i_val = i_test
         
