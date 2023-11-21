@@ -10,9 +10,10 @@ def load_dtu_data(path, train_scene, mask_path=None):
    
     masks = None
     if mask_path is not None:
-        cat = imgfiles[0].split('/')[3]
-        seen_views  = '_'.join(map(str,train_scene))
-        maskdir = os.path.join('./data/DTU_mask/', cat, seen_views)
+        # cat = imgfiles[0].split('/')[3]
+        # seen_views  = '_'.join(map(str,train_scene))
+        # maskdir = os.path.join('./data/DTU_mask/', cat, seen_views)
+        maskdir = os.path.join(path, 'mask')
         maskfiles = [os.path.join(maskdir, i) for i in imgnames] 
     
     def imread(f):
