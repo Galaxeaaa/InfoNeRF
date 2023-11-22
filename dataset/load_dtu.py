@@ -18,7 +18,7 @@ def load_dtu_data(path, train_scene, mask_path=None):
     
     def imread(f):
         if f.endswith('png'):
-            return imageio.imread(f, ignoregamma=True)
+            return imageio.imread(f)
         else:
             return imageio.imread(f)
 
@@ -30,7 +30,7 @@ def load_dtu_data(path, train_scene, mask_path=None):
         masks = [imread(f)[...,0]/255. for f in maskfiles]
         masks = np.stack(masks, 0)
 
-    cam_path = os.path.join(path, "cameras.npz")
+    cam_path = os.path.join(path, "cameras_sphere.npz")
     all_cam = np.load(cam_path)
 
     focal = 0

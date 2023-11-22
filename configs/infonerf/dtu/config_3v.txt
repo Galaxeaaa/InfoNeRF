@@ -40,4 +40,4 @@ no_batching=True
 # train_scene = [22, 25,28]
 test_scene = [-1]
 no_ndc = True
-mask_dir = "mask"
+maskdir = "mask"
